@@ -1,0 +1,79 @@
+import pygame
+import keyboard
+import time
+
+pygame.mixer.init()
+
+playlist = [
+    "nature.mp3",  # 1
+    "cloud.mp3",   # 2
+    "water.mp3"    # 3
+]
+
+current_track = 0
+is_playing = False
+paused = False
+
+def load_and_play(index):
+    global is_playing, paused
+    pygame.mixer.music.load(playlist[index])
+    pygame.mixer.music.play()
+    is_playing = True
+    paused = False
+    print(f"Ойнап жатыр: {playlist[index]}")
+
+def stop():
+    global is_playing, paused
+    pygame.mixer.music.stop()
+    is_playing = False
+    paused = False
+    print("Тоқтады.")
+
+def next_track():
+    global current_track
+    current_track = (current_track + 1) % len(playlist)
+    load_and_play(current_track)
+
+def previous_track():
+    global current_track
+    current_track = (current_track - 1) % len(playlist)
+    load_and_play(current_track)
+
+def toggle_pause():
+    global paused
+    if not is_playing:
+        load_and_play(current_track)
+    elif paused:
+        pygame.mixer.music.unpause()
+        paused = False
+        print("Жалғасты.")
+    else:
+        pygame.mixer.music.pause()
+        paused = True
+        print("Аялдады.")
+
+print("Пернелер: [Space] Ойнату/Аялдату | [S] Тоқтату | [N] Келесі | [P] Алдыңғы")
+
+try:
+    while True:
+        if keyboard.is_pressed("space"):
+            toggle_pause()
+            time.sleep(0.5)
+
+        elif keyboard.is_pressed("s"):
+            stop()
+            time.sleep(0.5)
+
+        elif keyboard.is_pressed("n"):
+            next_track()
+            time.sleep(0.5)
+
+        elif keyboard.is_pressed("p"):
+            previous_track()
+            time.sleep(0.5)
+
+        time.sleep(0.1)
+
+except KeyboardInterrupt:
+    print("Шығу...")
+    pygame.mixer.music.stop()
